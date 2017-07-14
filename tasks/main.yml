@@ -1,0 +1,20 @@
+- name: download the installer
+  get_url: url=https://github.com/vmware/harbor/releases/download/v1.1.2/harbor-offline-installer-v1.1.2.tgz dest=/root/harbor-offline-installer-v1.1.2.tgz
+
+- name: create /opt/harbor-installer
+  file: dest=/opt/harbor-installer state=directory
+
+- name: install tar and gzip
+  yum: name={{ item }}
+  with_items:
+    - tar
+    - gzip
+
+- name: unpack the installer
+  unarchive: remote_src=True src=/root/harbor-offline-installer-v1.1.2.tgz dest=/opt/harbor-installer
+
+- name: put harbor.cfg
+  template: src=harbor.cfg dest=/opt/harbor-installer/harbor/harbor.cfg backup=yes
+
+  #- name: run the installer
+  #  shell: cd /opt/harbor-installer/harbor/ && ./install.sh
